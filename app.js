@@ -37,19 +37,44 @@ function fillFilters(){
   fill('companyFilter', state.rows.map(r=>r.company), 'Todas empresas')
   fill('channelFilter', state.rows.map(r=>r.channel), 'Todos canais')
 }
+async function fetchAllSalesItems(){
+  const pageSize = 1000
+  let from = 0
+  let all = []
+  while (true) {
+    const to = from + pageSize - 1
+    const { data, error } = await supabase
+      .from('sales_items')
+      .select('*')
+      .order('sale_date', { ascending: false })
+      .range(from, to)
+    if (error) throw error
+    const chunk = data || []
+    all = all.concat(chunk)
+    if (chunk.length < pageSize) break
+    from += pageSize
+    if (from > 100000) break
+  }
+  return all
+}
+
 async function loadAll(){
-  const [items, params, balances, payments] = await Promise.all([
-    supabase.from('sales_items').select('*').order('sale_date',{ascending:false}).limit(50000),
-    supabase.from('pricing_params').select('*').eq('active',true).order('created_at',{ascending:false}).limit(1),
-    supabase.from('v_repayment_balance').select('*').order('period_key',{ascending:false}),
-    supabase.from('payments').select('*').order('paid_at',{ascending:false}).limit(500)
-  ])
-  if(items.error) { $('view').textContent = items.error.message; return }
-  state.rows = items.data || []
-  state.params = (params.data||[])[0] || null
-  state.balances = balances.data || []
-  state.payments = payments.data || []
-  fillFilters(); render()
+  try {
+    $('view').textContent = 'Carregando dados atualizados...'
+    const [rows, params, balances, payments] = await Promise.all([
+      fetchAllSalesItems(),
+      supabase.from('pricing_params').select('*').eq('active',true).order('created_at',{ascending:false}).limit(1),
+      supabase.from('v_repayment_balance').select('*').order('period_key',{ascending:false}),
+      supabase.from('payments').select('*').order('paid_at',{ascending:false}).limit(500)
+    ])
+    state.rows = rows || []
+    state.params = (params.data||[])[0] || null
+    state.balances = balances.data || []
+    state.payments = payments.data || []
+    fillFilters(); render()
+  } catch (e) {
+    $('view').textContent = e.message || String(e)
+  }
 }
 function setCards(rows){ const s=summarize(rows); $('fat').textContent=BRL(s.fat); $('rep').textContent=BRL(s.rep); $('ped').textContent=NUM(s.ped); $('itens').textContent=NUM(s.itens); $('sem').textContent=NUM(s.sem) }
 function group(rows,key){ const m=new Map(); rows.forEach(r=>{const k=r[key]||'—'; if(!m.has(k))m.set(k,[]); m.get(k).push(r)}); return [...m.entries()].map(([name,rs])=>({name, ...summarize(rs)})).sort((a,b)=>b.rep-a.rep) }
