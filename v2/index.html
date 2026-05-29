@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dashboard Repasse Cliente</title>
+<style>
+:root{--bg:#07111f;--card:#111b2e;--line:#25364f;--text:#eef5ff;--muted:#91a4c2;--blue:#60a5fa;--green:#5eead4;--warn:#fbbf24;--bad:#fb7185}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top left,#12213d,#07111f 50%,#040812);font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;color:var(--text)}header{padding:22px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}h1{margin:0;font-size:24px}.sub{color:var(--muted);margin-top:5px}.wrap{padding:20px 22px}.login,.panel,.card{background:rgba(17,27,46,.94);border:1px solid var(--line);border-radius:18px}.login{max-width:420px;margin:40px auto;padding:18px}.row{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}input,select,button{background:#0f172a;color:var(--text);border:1px solid var(--line);border-radius:12px;padding:10px 12px}input{width:100%}button{cursor:pointer}.primary{background:linear-gradient(90deg,#2563eb,#0891b2);border:0}.cards{display:grid;grid-template-columns:repeat(5,minmax(130px,1fr));gap:12px;margin-bottom:16px}.card{padding:15px}.label{font-size:12px;color:var(--muted)}.val{font-size:22px;font-weight:850;margin-top:6px}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.tabs button.active{background:linear-gradient(90deg,#2563eb,#0891b2);border:0}.panel{padding:16px;overflow:hidden}table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px solid var(--line);padding:9px 8px;text-align:left}th{color:var(--muted)}td.num{text-align:right;font-variant-numeric:tabular-nums}.params{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:15px}.param{background:#0b1528;border:1px solid var(--line);border-radius:14px;padding:12px}.hidden{display:none}.warn{color:var(--warn)}.bad{color:var(--bad)}@media(max-width:900px){.cards{grid-template-columns:1fr 1fr}.wrap,header{padding:15px}}
+</style>
+</head>
+<body>
+<header><div><h1>Dashboard de Repasse</h1><div class="sub">Cliente visualiza; admin altera parâmetros com login.</div></div><div id="userBox"></div></header>
+<main class="wrap">
+<section id="loginBox" class="login"><h2>Entrar</h2><p class="sub">Use o e-mail/senha configurado no Supabase.</p><div class="row"><input id="email" placeholder="email" type="email"></div><div class="row"><input id="password" placeholder="senha" type="password"></div><div class="row"><button class="primary" id="loginBtn">Entrar</button></div><div id="loginMsg" class="bad"></div></section>
+<section id="app" class="hidden">
+  <div class="tabs"><button id="tabResumo" class="active">Resumo</button><button id="tabVendas">Vendas</button><button id="tabSkus">SKUs sem custo</button><button id="tabPagamentos">Pagamentos / Saldo</button><button id="tabParams">Parâmetros</button></div>
+  <div class="row"><select id="monthFilter"><option value="">Todos os meses</option></select><select id="companyFilter"><option value="">Todas empresas</option></select><select id="channelFilter"><option value="">Todos canais</option></select><button id="refreshBtn">Atualizar tela</button></div>
+  <div class="cards"><div class="card"><div class="label">Faturamento</div><div class="val" id="fat">R$ 0,00</div></div><div class="card"><div class="label">Repasse</div><div class="val" id="rep">R$ 0,00</div></div><div class="card"><div class="label">Pedidos</div><div class="val" id="ped">0</div></div><div class="card"><div class="label">Itens</div><div class="val" id="itens">0</div></div><div class="card"><div class="label">SKUs sem custo</div><div class="val warn" id="sem">0</div></div></div>
+  <section id="view" class="panel">Carregando...</section>
+</section>
+</main>
+<script>
+window.SUPABASE_URL = 'https://emkwvlkovzengmzcvnen.supabase.co';
+window.SUPABASE_ANON_KEY = 'sb_publishable_ODMg2A4ytcETIN-BHagWsg_f5Vk_sTS';
+</script>
+<script type="module" src="./app.js?v=20260529-historico"></script>
+</body>
+</html>
