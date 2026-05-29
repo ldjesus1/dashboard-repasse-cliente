@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dashboard Repasse Cliente v3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<link rel="stylesheet" href="./styles.css">
+<script>window.SUPABASE_URL='https://emkwvlkovzengmzcvnen.supabase.co';window.SUPABASE_ANON_KEY='sb_publishable_ODMg2A4ytcETIN-BHagWsg_f5Vk_sTS';</script>
+</head>
+<body>
+<div class="shell">
+  <aside class="side"><div class="brand"><div class="bolt">R$</div><strong>Repasse</strong></div><nav><button data-view="resumo" class="active">Dashboard</button><button data-view="faturamento">Faturamento</button><button data-view="repasse">Repasse</button><button data-view="saldos">Saldos</button><button data-view="alertas">Alertas de custo</button><button data-view="skus">SKUs sem custo</button><button data-view="parametros">Parâmetros</button></nav><div class="hint">Atualização automática<br>08:00 • 12:00 • 17:00</div></aside>
+  <main>
+    <header class="top"><div><h1>Dashboard de Repasse</h1><p>Faturamento, repasse, saldo devedor e auditoria de custos.</p></div><div id="userBox"></div></header>
+    <section id="login" class="login"><h2>Entrar</h2><input id="email" type="email" placeholder="email"><input id="password" type="password" placeholder="senha"><button id="loginBtn">Entrar</button><p id="loginMsg"></p></section>
+    <section id="app" class="hidden"><div class="filters"><select id="monthFilter"><option value="">Todos os meses</option></select><select id="companyFilter"><option value="">Todas empresas</option></select><select id="channelFilter"><option value="">Todos canais</option></select><button id="refreshBtn">Atualizar</button></div><div class="cards" id="cards"></div><section id="content" class="panel">Carregando...</section></section>
+  </main>
+</div>
+<script type="module" src="./app.js?v=20260529-cost-alerts"></script>
+</body>
+</html>
