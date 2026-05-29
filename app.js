@@ -18,8 +18,8 @@ async function enter(session){
   $('loginBox').classList.add('hidden'); $('app').classList.remove('hidden')
   $('userBox').innerHTML = `<button id="logoutBtn">Sair</button>`
   $('logoutBtn').onclick = async()=>{ await supabase.auth.signOut(); location.reload() }
-  // Regra simples inicial: todo usuário logado pode visualizar. Admin será e-mail allowlist por enquanto.
-  state.isAdmin = ['leandroodejesus@gmail.com'].includes(session.user.email)
+  // Todo usuário autenticado/cadastrado tem acesso completo às funções do dashboard.
+  state.isAdmin = !!session.user
   await loadAll()
 }
 async function login(){
