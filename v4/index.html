@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dashboard Repasse Cliente v4</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+tailwind.config={theme:{extend:{colors:{slate2:'#0f172a',brand:'#6366f1'}}}}
+window.SUPABASE_URL='https://emkwvlkovzengmzcvnen.supabase.co';
+window.SUPABASE_ANON_KEY='sb_publishable_ODMg2A4ytcETIN-BHagWsg_f5Vk_sTS';
+</script>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased">
+<div class="min-h-screen flex">
+  <aside class="w-72 bg-slate-900 text-slate-200 hidden lg:flex flex-col">
+    <div class="px-6 py-5 flex items-center gap-3 border-b border-slate-800">
+      <div class="h-10 w-10 rounded-2xl bg-indigo-500 grid place-items-center font-black text-white">R$</div>
+      <div><div class="font-bold text-white text-lg">Repasse</div><div class="text-xs text-slate-400">Cliente / Sócio</div></div>
+    </div>
+    <nav class="p-4 space-y-1" id="sideNav">
+      <button data-view="resumo" class="nav active">Dashboard</button>
+      <button data-view="faturamento" class="nav">Faturamento</button>
+      <button data-view="repasse" class="nav">Repasse</button>
+      <button data-view="saldos" class="nav">Saldos</button>
+      <button data-view="alertas" class="nav">Alertas de custo</button>
+      <button data-view="skus" class="nav">SKUs sem custo</button>
+      <button data-view="parametros" class="nav">Parâmetros</button>
+    </nav>
+    <div class="mt-auto p-4"><div class="rounded-2xl bg-slate-800 p-4 text-sm text-slate-300"><div class="font-semibold text-white mb-1">Atualizações</div>08:00 • 12:00 • 17:00<br><span class="text-xs text-slate-500">Horário de São Paulo</span></div></div>
+  </aside>
+  <main class="flex-1 min-w-0">
+    <header class="sticky top-0 z-10 bg-white/90 backdrop-blur border-b border-slate-200">
+      <div class="px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-4">
+        <div><h1 class="text-2xl font-bold text-slate-900">Dashboard de Repasse</h1><p class="text-sm text-slate-500">Visual v4 inspirado em React/Tailwind Dashboard — dados reais Supabase.</p></div>
+        <div id="userBox" class="text-sm"></div>
+      </div>
+    </header>
+    <div class="p-4 sm:p-6 lg:p-8">
+      <section id="login" class="max-w-md bg-white rounded-3xl shadow-sm border border-slate-200 p-6">
+        <h2 class="text-xl font-bold mb-1">Entrar</h2><p class="text-sm text-slate-500 mb-5">Use usuário cadastrado no Supabase Auth.</p>
+        <input id="email" class="w-full rounded-xl border-slate-300 mb-3" type="email" placeholder="email">
+        <input id="password" class="w-full rounded-xl border-slate-300 mb-4" type="password" placeholder="senha">
+        <button id="loginBtn" class="w-full rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3">Entrar</button>
+        <p id="loginMsg" class="text-rose-600 text-sm mt-3"></p>
+      </section>
+      <section id="app" class="hidden">
+        <div class="lg:hidden mb-4 grid grid-cols-2 gap-2" id="mobileNav"></div>
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-4 mb-6 flex flex-wrap gap-3 items-center">
+          <select id="monthFilter" class="rounded-xl border-slate-300"><option value="">Todos os meses</option></select>
+          <select id="companyFilter" class="rounded-xl border-slate-300"><option value="">Todas empresas</option></select>
+          <select id="channelFilter" class="rounded-xl border-slate-300"><option value="">Todos canais</option></select>
+          <button id="refreshBtn" class="rounded-xl bg-slate-900 text-white px-4 py-2 font-semibold">Atualizar</button>
+        </div>
+        <div id="cards" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4 mb-6"></div>
+        <section id="content" class="bg-white rounded-3xl shadow-sm border border-slate-200 p-5 overflow-hidden">Carregando...</section>
+      </section>
+    </div>
+  </main>
+</div>
+<style>
+.nav{width:100%;text-align:left;padding:.78rem 1rem;border-radius:.85rem;color:#cbd5e1;font-weight:600}.nav:hover,.nav.active{background:#1e293b;color:#fff}input,select{border:1px solid #cbd5e1;padding:.62rem .8rem}.num{text-align:right;font-variant-numeric:tabular-nums}th{font-weight:700;color:#64748b;background:#f8fafc}th,td{padding:.72rem .8rem;border-bottom:1px solid #e2e8f0;text-align:left}.table-wrap{overflow:auto}.card-kpi{background:white;border:1px solid #e2e8f0;border-radius:1.3rem;padding:1.1rem;box-shadow:0 1px 2px #00000008}.chartbox{height:330px}.bad{color:#e11d48}.warn{color:#d97706}.ok{color:#059669}
+</style>
+<script type="module" src="./app.js?v=20260529-v4"></script>
+</body>
+</html>
