@@ -85,26 +85,21 @@ function costAlerts(rows){
   return rows.map(r=>{
     const vendaUnit = unitSale(r)
     const custo = Number(r.cost_unit || 0)
-    const repUnit = Number(r.transfer_unit_value || 0)
-    const costPct = vendaUnit > 0 && custo > 0 ? custo / vendaUnit : null
-    const repPct = vendaUnit > 0 && repUnit > 0 ? repUnit / vendaUnit : null
+    const costPct = vendaUnit > 0 && r.cost_found && custo > 0 ? custo / vendaUnit : null
     const alerts = []
     let severity = 0
-    if(!r.cost_found){ alerts.push('SKU sem custo'); severity=Math.max(severity,3) }
-    if(r.cost_found && custo <= 0){ alerts.push('Custo zerado/negativo'); severity=Math.max(severity,3) }
-    if(r.cost_found && vendaUnit >= 20 && custo > 0 && custo < 1){ alerts.push('Custo menor que R$ 1 em venda acima de R$ 20'); severity=Math.max(severity,3) }
-    if(costPct !== null && costPct < 0.05){ alerts.push('Custo < 5% do valor vendido unitário'); severity=Math.max(severity,3) }
-    else if(costPct !== null && costPct < 0.10){ alerts.push('Custo entre 5% e 10% do valor vendido unitário'); severity=Math.max(severity,2) }
-    if(repPct !== null && repPct < 0.20){ alerts.push('Repasse unitário < 20% do valor vendido unitário'); severity=Math.max(severity,3) }
-    else if(repPct !== null && repPct < 0.30){ alerts.push('Repasse unitário entre 20% e 30% do valor vendido unitário'); severity=Math.max(severity,2) }
-    return {...r, vendaUnit, costPct, repPct, alerts, severity}
+    // SKUs sem custo/preço ficam exclusivamente na aba "SKUs sem custo".
+    // Esta auditoria foca custo alto demais contra o valor de venda unitário.
+    if(costPct !== null && costPct >= 0.80){ alerts.push('Custo consome 80% ou mais do valor vendido unitário'); severity = 3 }
+    else if(costPct !== null && costPct >= 0.60){ alerts.push('Custo consome acima de 60% do valor vendido unitário'); severity = 2 }
+    return {...r, vendaUnit, costPct, alerts, severity}
   }).filter(r=>r.alerts.length).sort((a,b)=>b.severity-a.severity || (Number(b.gross_value||0)-Number(a.gross_value||0)))
 }
 function renderAlertas(rows){
   const alerts = costAlerts(rows)
   const crit = alerts.filter(a=>a.severity>=3).length
   const warn = alerts.filter(a=>a.severity===2).length
-  $('view').innerHTML = `<h2>Alertas de custo</h2><p class="sub">Regras para encontrar possível erro na planilha de custos: SKU sem custo, custo zerado, custo muito baixo contra valor vendido e repasse unitário baixo demais.</p><div class="cards"><div class="card"><div class="label">Alertas críticos</div><div class="val bad">${NUM(crit)}</div></div><div class="card"><div class="label">Alertas atenção</div><div class="val warn">${NUM(warn)}</div></div><div class="card"><div class="label">Total alertas</div><div class="val">${NUM(alerts.length)}</div></div></div><div style="overflow:auto"><table><thead><tr><th>Sev.</th><th>Empresa</th><th>Canal</th><th>Pedido</th><th>SKU</th><th>Descrição</th><th class="num">Venda unit.</th><th class="num">Custo</th><th class="num">Custo/Venda</th><th class="num">Repasse unit.</th><th>Motivo</th></tr></thead><tbody>${alerts.slice(0,1500).map(r=>`<tr><td>${r.severity>=3?'<span class="bad">Crítico</span>':'<span class="warn">Atenção</span>'}</td><td>${r.company}</td><td>${r.channel}</td><td>${r.marketplace_order_id||''}</td><td>${r.sku}</td><td>${r.description||''}</td><td class="num">${BRL(r.vendaUnit)}</td><td class="num">${r.cost_found?BRL(r.cost_unit):'—'}</td><td class="num">${r.costPct===null?'—':(r.costPct*100).toFixed(1)+'%'}</td><td class="num">${BRL(r.transfer_unit_value)}</td><td>${r.alerts.join('; ')}</td></tr>`).join('')}</tbody></table></div>`
+  $('view').innerHTML = `<h2>Alertas de custo</h2><p class="sub">Esta aba não mostra SKUs sem custo — eles ficam na aba própria. Aqui aparecem produtos cujo custo parece alto demais: acima de 60% do valor vendido unitário.</p><div class="cards"><div class="card"><div class="label">Crítico: custo ≥ 80%</div><div class="val bad">${NUM(crit)}</div></div><div class="card"><div class="label">Atenção: custo ≥ 60%</div><div class="val warn">${NUM(warn)}</div></div><div class="card"><div class="label">Total alertas</div><div class="val">${NUM(alerts.length)}</div></div></div><div style="overflow:auto"><table><thead><tr><th>Sev.</th><th>Empresa</th><th>Canal</th><th>Pedido</th><th>SKU</th><th>Descrição</th><th class="num">Venda unit.</th><th class="num">Custo</th><th class="num">Custo/Venda</th><th>Motivo</th></tr></thead><tbody>${alerts.slice(0,1500).map(r=>`<tr><td>${r.severity>=3?'<span class="bad">Crítico</span>':'<span class="warn">Atenção</span>'}</td><td>${r.company}</td><td>${r.channel}</td><td>${r.marketplace_order_id||''}</td><td>${r.sku}</td><td>${r.description||''}</td><td class="num">${BRL(r.vendaUnit)}</td><td class="num">${BRL(r.cost_unit)}</td><td class="num">${r.costPct===null?'—':(r.costPct*100).toFixed(1)+'%'}</td><td>${r.alerts.join('; ')}</td></tr>`).join('')}</tbody></table></div>`
 }
 
 function renderResumo(rows){ const byCompany=group(rows,'company'); $('view').innerHTML=`<h2>Resumo por empresa</h2>${tableSummary(byCompany)}` }
